@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>FutureFlow</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/static/ico.png">
+    <link
+        rel="stylesheet"
+        type="text/css"
+        href="{{ url_for('static', filename='style.css') }}"
+    />
+    <!-- Load icon library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.socket.io/4.1.2/socket.io.min.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9301191604998129"
+    crossorigin="anonymous"></script>
+    
+    <meta name="description" content="A Fun and Simple, Unrestricted, Chat App">
+
+
+    </head>
+    <body>
+    <nav id="navbar">
+        <ul>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('profile') }}">Profile</a></li>
+            <li><a href="{{ url_for('search') }}">Search</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+    </nav>
+    <audio id="notification">
+        <source src="{{ url_for('static', filename='ding.mp3') }}" type="audio/mpeg">
+    </audio>
+        
+        <script>
+        // Function to play the notification sound
+        function playNotification() {
+            var notificationSound = document.getElementById("notification");
+            notificationSound.play();
+        }
+        </script>
+        
+    <script>
+        window.addEventListener("scroll", function () {
+        var navbar = document.getElementById("navbar");
+        if (window.scrollY == 0) {
+            navbar.style.opacity = 1;
+        } else {
+            navbar.style.opacity = 0.7;
+        }
+        });
+    </script>
+    <div style="padding:10px;"></div>
+    <h1>Welcome, {{ username }}!</h1>
+    <center><p>Users Online: {{ usersonline }}</p></center>
+    <div class="container">
+        
+        
+        <div class="chatroom" id="message-box">
+            <div class="message-box" style=>
+                <!-- <ul>
+                    {% for message in messages %}
+                        <li>
+                            <div class="message">
+                                <p>{{ message[0] }}: {{ message[1] }}</p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul> -->
+                
+            </div>
+            
+        </div>
+        <form method="post" action="{{ url_for('home') }}">
+            <input type="text" id="message" name="message" placeholder="Type your message..." required>
+            <button type="submit">Send</button>
+        </form>
+
+
+
+        </div>
+
+        
+<style>
+.avatar {
+    border-radius: 20%;
+    margin-right: 1px;
+}
+</style>        
+<style>
+    .message {
+        flex-wrap: wrap;
+        display: flex;
+    }
+
+    .message ul {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    .message li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .message li:first-child {
+        margin-right: 10px;
+    }
+    .message p {
+        word-wrap: break-word;
+        word-break: break-all;
+    }
+    .message ul {
+            display: block;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+    
+        .message ul li {
+            display: inline-block;
+            vertical-align: middle;
+
+        }
+    
+        .message p {
+            display: inline-block;
+            margin: 0;
+            padding: 0;
+            word-wrap: break-word;
+            word-break: break-all;
+            vertical-align: middle;
+        }
+</style>
+
+
+<script>
+    
+    
+    window.onload = function() {
+        socket.on('messages', function(data) {
+            const messages = data.messages;
+            const messageBox = document.getElementById('message-box');
+            messageBox.innerHTML = '';
+            if (messages.length == 0) {
+                messageBox.innerHTML = `
+                <div class="message">
+                    <p style="color:#CDCDCD;">Sorry, No Messages Yet. Share the link to add your friends!</p>
+                </div>
+            `;
+            } else {
+            for (const message of messages) {
+                messageBox.innerHTML += `
+                <div class="message">
+                    <ul>
+                        <li><ul>
+                            <li><img class="avatar" src="https://avatars.dicebear.com/api/identicon/${message[0]}.svg" alt="avatar" width="15px"/></li>
+                            <li><p>${message[0]}: </p></li>
+                        </ul></li>
+                        
+                        <li><p>${message[1]}</p></li>
+                        
+                    </ul>
+                </div>
+                <div style="padding:5px; />
+                    `;
+                }
+            messageBox.scrollTop = messageBox.scrollHeight;
+            playNotification();
+            }
+        });
+    };
+    
+    window.addEventListener("scroll", function () {
+        var navbar = document.getElementById("navbar");
+        if (window.scrollY == 0) {
+            navbar.style.opacity = 1;
+        } else {
+            navbar.style.opacity = 0.7;
+        }
+    });
+    
+    window.addEventListener('load', () => {
+        const messageBox = document.getElementById('message-box');
+        messageBox.scrollTop = messageBox.scrollHeight;
+    });
+    
+    const socket = io.connect('http://' + document.domain + ':' + location.port);
+    
+    socket.on('connect', function(data) {
+        console.log('Connected to server');
+        socket.emit('get_messages');
+        
+        
+    });
+    
+    socket.on('disconnect', function() {
+        console.log('Disconnected from server');
+    });
+    
+    socket.on('messages', function(data) {
+        const messages = data.messages;
+        const messageBox = document.getElementById('message-box');
+        //messageBox.innerHTML = '';
+        if (messages.length == 0) {
+            messageBox.innerHTML = `
+            <div class="message">
+                <p style="color:#CDCDCD;">Sorry, No Messages Yet. Share the link to add your friends!</p>
+            </div>
+        `;
+        } else {
+        
+        
+            for (const message of messages) {
+                messageBox.innerHTML += `
+                <div class="message">
+                    <ul>
+                        <li><ul>
+                            <li><img class="avatar" src="https://avatars.dicebear.com/api/identicon/${message[0]}.svg" alt="avatar" width="15px"/></li>
+                            <li><p>${message[0]}: </p></li>
+                        </ul></li>
+                        
+                        <li><p>${message[1]}</p></li>
+                        
+                    </ul>
+                </div>
+                <div style="padding:5px; />
+                `;
+            }
+        }
+        
+        messageBox.scrollTop = messageBox.scrollHeight;
+    });
+    
+    const messageForm = document.querySelector('form');
+    const messageInput = document.getElementById('message');
+    
+    messageForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const message = messageInput.value.trim();
+        if (message) {
+            socket.emit('message', message);
+            messageInput.value = '';
+        }
+    });
+    
+</script>
+
+        <footer class="footer">
+            <a style="color:#888;" href="https://github.com/ousmblueninja">Made by GigabiteStudios</a>
+        </footer>
+
+    </body>
+</html>

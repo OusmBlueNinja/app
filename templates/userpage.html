@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ username }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/x-icon" href="/static/ico.png">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9301191604998129"
+    crossorigin="anonymous"></script>
+    
+    <meta name="description" content="A Fun and Simple, Unrestricted, Chat App">
+</head>
+<body>
+    <nav id="navbar">
+        <ul>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('profile') }}">Profile</a></li>
+            <li><a href="{{ url_for('search') }}">Search</a></li>
+            <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        </ul>
+    </nav>
+    
+    <script>
+        window.addEventListener("scroll", function() {
+        var navbar = document.getElementById("navbar");
+        if (window.scrollY == 0) {
+            navbar.style.opacity = 1;
+        } else {
+            navbar.style.opacity = 0.7;
+        }
+        });
+
+        function setEmailButton(email) {
+            var button = document.getElementById("email-button");
+            button.textContent = email;
+        }
+    </script>
+
+    <div id="email-popup" class="email-popup">
+        <form method="POST" action="{{ url_for('profile') }}">
+            <label for="email">Enter your email:</label><br>
+            <input type="email" id="email" name="email"><br><br>
+            <input type="submit" value="Submit" onclick="setEmailButton(document.getElementById('email').value);">
+        </form>
+    </div>
+    
+    <div class="container">
+        <h1>{{ username }}</h1>
+        <style>
+
+            .avatar {
+                border: 1px solid lightgrey; /* Add a 3px gray solid border around the image */
+                padding: 5px;
+                background-color:white;
+                border-radius: 10%; /* Make the image circular */
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            }
+        </style>
+        <center><img class="avatar" src="https://avatars.dicebear.com/api/identicon/{{ username }}.svg" alt="avatar" width="100px"/></center>
+        <li><padding style="padding:10px"></padding></li>
+        <li>Username:  {{ username }} </li>
+        <li><padding style="padding:10px"></padding></li>
+        <li>Messages Sent: {{ messagessent }}</li>
+        <li><padding style="padding:10px"></padding></li>
+        <li>Followers: {{ followers }} </li>
+        <li><padding style="padding:10px"></padding></li>
+
+        
+    </div>
+
+
+    <footer class="footer">
+        <a style="color:#888;" href="https://github.com/ousmblueninja">Made by GigabiteStudios</a>
+    </footer>
+</body>
+</html>
