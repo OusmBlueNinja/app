@@ -1,5 +1,5 @@
 database.db
 messages.db
 globaldata.db
-.vscode
-__pycache__
+./.vscode
+./__pycache__
