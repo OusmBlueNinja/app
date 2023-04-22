@@ -5,6 +5,7 @@ from flask_login import LoginManager
 from flask_socketio import SocketIO, emit
 import re
 import Levenshtein
+import json
 
 
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'  
@@ -49,6 +50,17 @@ def connect():
     global clients
     clients += 1
     print(clients)
+    with open("./globaldata.json", "r") as f:
+                data = json.load(f)
+    
+
+    data['totalusers'] += (clients)
+    new = json.dumps(data, indent=4)
+                
+                
+    with open("./globaldata.json", "w") as f:
+                f.write(new)
+    
 
 @socketio.on("disconnect", namespace="/")
 def disconnect():
@@ -57,21 +69,7 @@ def disconnect():
     print(clients)
     
     
-@app.route('/admin')
-def admin():
-    try:
-        if session['username'] == 'admin':
-            conn = sqlite3.connect('database.db')
-            c = conn.cursor()
-            c.execute('SELECT * FROM users')
-            users = c.fetchall()
-            conn.close()
 
-            return render_template('admin.html', users=users)
-        else:
-            return render_template('404.html')
-    except:
-        return render_template('404.html', error="404")
 
 def check_sql_injection(username, password):
     # List of common SQL injection keywords
@@ -192,6 +190,16 @@ def handle_message(message):
         cursor.execute("UPDATE users SET msgssent = ? WHERE username = ?", (msgssent, username))
         conn.commit()
         conn.close()  # close connection
+        with open("./globaldata.json", "r") as f:
+                data = json.load(f)
+    
+
+        data['totalmessages'] += 1
+        new = json.dumps(data, indent=4)
+
+
+        with open("./globaldata.json", "w") as f:
+                    f.write(new)
 
         messages = get_messages()
         socketio.emit('messages', {'messages': messages})
@@ -279,7 +287,7 @@ def search():
         cursor = conn.cursor()
         cursor.execute("SELECT username FROM users WHERE username LIKE ?", ('%' + query + '%',))
         results = cursor.fetchall()
-        results = sorted(results, key=lambda x: Levenshtein.distance(x[0], query))[:10]
+        results = sorted(results, key=lambda x: Levenshtein.distance(x[0], query))[:15]
         results = [result[0] for result in results]
         conn.close()
         
@@ -288,11 +296,43 @@ def search():
     else:
         return render_template('search.html')
 
+
+
 # Logout route
 @app.route('/logout')
 def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
+
+@app.route('/admin')
+def admin():
+    try:
+        if session['username'] == 'admin':
+            conn = sqlite3.connect('database.db')
+            c = conn.cursor()
+            c.execute('SELECT * FROM users')
+            users = c.fetchall()
+            conn.close()
+            with open("./globaldata.json", "r") as f:
+                data = json.load(f)
+            allmessages = data['totalmessages']
+            
+            allusers = len(users)
+            
+            
+            
+            
+                
+
+            return render_template('admin.html', users=users, online=clients, messages=allmessages, allusers=allusers)
+        else:
+            return render_template('404.html')
+    except:
+        return render_template('404.html', error="404")
+    
+    
+    
+
 
 @app.errorhandler(404)
 def page_not_found(e):

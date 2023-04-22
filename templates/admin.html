@@ -15,6 +15,9 @@
             border-collapse: collapse;
             width: 75%;
             font-size: 16px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
 
         }
 
@@ -77,8 +80,49 @@
             <input type="submit" value="Submit" onclick="setEmailButton(document.getElementById('email').value);">
         </form>
     </div>
+    <style>
+
+        /* Style for the three boxes */
+        .box {
+            border-size:0px;
+            margin: 10px 3vw;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Style for the heading of each box */
+        .box h2 {
+            font-size: 70px;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        /* Style for the content of each box */
+        .box p {
+            font-size: 50px;
+            line-height: 1.5;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+    </style>
+    <padding style="padding:100px"></padding>
+    <div style="display: flex; justify-content: center;">
+        <div class="box">
+            Users Online: {{ online }}
+        </div>
+        <div class="box">
+            Messages Sent: {{ messages }}
+        </div>
+        <div class="box">
+            Total Users: {{ allusers }}
+        </div>
+    </div>
     
-    <li><padding style="padding:10px"></padding></li>
+    <li><padding style="padding:100px"></padding></li>
         <table class="center">
             <tr>
                 <th>Username</th>
