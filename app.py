@@ -278,6 +278,11 @@ def profile():
 
 
 
+@app.route('/robots.txt')
+def robots():
+    return app.send_static_file('robots.txt')
+
+
 #search
 @app.route('/search', methods=['GET', 'POST'])
 def search():
