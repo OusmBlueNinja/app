@@ -1,0 +1,5 @@
+database.db
+messages.db
+globaldata.db
+.vscode
+__pycache__
